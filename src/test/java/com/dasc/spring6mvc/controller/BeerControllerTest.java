@@ -20,6 +20,7 @@ import com.dasc.spring6mvc.model.Beer;
 import com.dasc.spring6mvc.service.BeerService;
 import com.dasc.spring6mvc.service.BeerServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -109,14 +110,23 @@ class BeerControllerTest {
   void getBeerById() throws Exception {
     Beer testBeer = beerServiceImpl.listBeers().get(0);
 
-    given(beerService.getBeerById(any(UUID.class))).willReturn(testBeer);
+    given(beerService.getBeerById(any(UUID.class))).willReturn(Optional.of(testBeer));
 
     mockMvc.perform(get(BEER_PATH_ID, UUID.randomUUID())
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.id", is(testBeer.getId().toString())));
+  }
 
+  @Test
+  void getBeerByIdNotFound() throws Exception {
+
+    given(beerService.getBeerById(any(UUID.class))).willReturn(Optional.empty());
+
+    mockMvc.perform(get(BEER_PATH_ID, UUID.randomUUID())
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound());
   }
 
 }

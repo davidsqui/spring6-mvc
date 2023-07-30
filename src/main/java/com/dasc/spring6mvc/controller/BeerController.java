@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,7 +57,7 @@ public class BeerController {
   @GetMapping(BEER_PATH_ID)
   public Beer getBeerById(@PathVariable UUID beerId) {
     log.debug("Geet Beer by beerId in controller");
-    return beerService.getBeerById(beerId);
+    return beerService.getBeerById(beerId).orElseThrow(NotFoundException::new);
   }
 
 }
