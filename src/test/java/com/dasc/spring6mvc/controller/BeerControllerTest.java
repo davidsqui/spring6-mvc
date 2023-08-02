@@ -30,6 +30,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 @WebMvcTest(BeerController.class)
 class BeerControllerTest {
@@ -97,9 +98,27 @@ class BeerControllerTest {
         .andExpect(header().exists("Location"));
   }
 
+  @Test
+  void testCreateNewBeerNullBeerName() throws Exception {
+    BeerDTO beerDTO = BeerDTO.builder().build();
+
+    given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(
+        beerServiceImpl.listBeers().get(1));
+
+    MvcResult mvcResult = mockMvc.perform(post(BEER_PATH)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(beerDTO)))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.length()", is(6)))
+        .andReturn();
+
+    System.out.println(mvcResult.getResponse().getContentAsString());
+  }
+
 
   @Test
-  void listBeers() throws Exception {
+  void testListBeers() throws Exception {
     given(beerService.listBeers()).willReturn(beerServiceImpl.listBeers());
 
     mockMvc.perform(get(BEER_PATH)

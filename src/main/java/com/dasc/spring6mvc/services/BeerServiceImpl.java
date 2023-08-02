@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -110,5 +111,32 @@ public class BeerServiceImpl implements BeerService {
   public Boolean deleteBeerById(UUID beerId) {
     beerMap.remove(beerId);
     return true;
+  }
+
+  @Override
+  public Optional<BeerDTO> patchBeerById(UUID beerId, BeerDTO beer) {
+    BeerDTO existing = beerMap.get(beerId);
+
+    if (StringUtils.hasText(beer.getBeerName())) {
+      existing.setBeerName(beer.getBeerName());
+    }
+
+    if (beer.getBeerStyle() != null) {
+      existing.setBeerStyle(beer.getBeerStyle());
+    }
+
+    if (beer.getPrice() != null) {
+      existing.setPrice(beer.getPrice());
+    }
+
+    if (beer.getQuantityOnHand() != null) {
+      existing.setQuantityOnHand(beer.getQuantityOnHand());
+    }
+
+    if (StringUtils.hasText(beer.getUpc())) {
+      existing.setUpc(beer.getUpc());
+    }
+
+    return Optional.of(existing);
   }
 }
