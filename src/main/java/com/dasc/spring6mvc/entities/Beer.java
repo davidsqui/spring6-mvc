@@ -18,7 +18,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.id.UUIDGenerator;
+import org.hibernate.type.SqlTypes;
 
 
 @Entity
@@ -32,7 +34,8 @@ public class Beer {
   @Id
   @GeneratedValue(generator = "UUID")
   @GenericGenerator(name = "UUID", type = UUIDGenerator.class)
-  @Column(columnDefinition = "varchar", length = 36, updatable = false, nullable = false)
+  @JdbcTypeCode(SqlTypes.CHAR)
+  @Column(columnDefinition = "varchar(36)", length = 36, updatable = false, nullable = false)
   private UUID id;
   @Version
   private Integer version;
