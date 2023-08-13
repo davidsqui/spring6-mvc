@@ -1,6 +1,7 @@
 package com.dasc.spring6mvc.controller;
 
 import com.dasc.spring6mvc.model.BeerDTO;
+import com.dasc.spring6mvc.model.BeerStyle;
 import com.dasc.spring6mvc.services.BeerService;
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -30,7 +32,8 @@ public class BeerController {
   private final BeerService beerService;
 
   @PatchMapping(BEER_PATH_ID)
-  public ResponseEntity updateBeerPatchById(@PathVariable("beerId")UUID beerId, @RequestBody BeerDTO beer){
+  public ResponseEntity updateBeerPatchById(@PathVariable("beerId") UUID beerId,
+      @RequestBody BeerDTO beer) {
 
     beerService.patchBeerById(beerId, beer);
 
@@ -61,8 +64,11 @@ public class BeerController {
   }
 
   @GetMapping(BEER_PATH)
-  public List<BeerDTO> listBeers() {
-    return beerService.listBeers();
+  public List<BeerDTO> listBeers(
+      @RequestParam(required = false) String beerName,
+      @RequestParam(required = false) BeerStyle beerStyle,
+      @RequestParam(required = false) Boolean showInventory) {
+    return beerService.listBeers(beerName, beerStyle, showInventory);
   }
 
   @GetMapping(BEER_PATH_ID)

@@ -3,12 +3,12 @@ package com.dasc.spring6mvc.services;
 import com.dasc.spring6mvc.entities.Beer;
 import com.dasc.spring6mvc.mappers.BeerMapper;
 import com.dasc.spring6mvc.model.BeerDTO;
+import com.dasc.spring6mvc.model.BeerStyle;
 import com.dasc.spring6mvc.repositories.BeerRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -23,10 +23,37 @@ public class BeerServiceJpa implements BeerService {
   private final BeerMapper beerMapper;
 
   @Override
-  public List<BeerDTO> listBeers() {
-    return beerRepository.findAll().stream()
+  public List<BeerDTO> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory) {
+    List<Beer> beers;
+    if (StringUtils.hasText(beerName) && beerStyle == null) {
+      beers = listBeersByName(beerName);
+    } else if (!StringUtils.hasText(beerName) && beerStyle != null) {
+      beers = listBeersByStyle(beerStyle);
+    } else if (StringUtils.hasText(beerName) && beerStyle != null) {
+      beers = listBeersByNameAndStyle(beerName, beerStyle);
+    } else {
+      beers = beerRepository.findAll();
+    }
+
+    if (showInventory != null && showInventory) {
+      beers.forEach(beer -> beer.setQuantityOnHand(null));
+    }
+
+    return beers.stream()
         .map(beerMapper::beerToBeerDto)
-        .collect(Collectors.toList());
+        .toList();
+  }
+
+  private List<Beer> listBeersByName(String beerName) {
+    return beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%");
+  }
+
+  private List<Beer> listBeersByStyle(BeerStyle beerStyle) {
+    return beerRepository.findAllByBeerStyle(beerStyle);
+  }
+
+  private List<Beer> listBeersByNameAndStyle(String beerName, BeerStyle beerStyle) {
+    return beerRepository.findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + beerName + "%", beerStyle);
   }
 
   @Override

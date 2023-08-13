@@ -1,13 +1,17 @@
 package com.dasc.spring6mvc.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.dasc.spring6mvc.entities.Beer;
 import com.dasc.spring6mvc.mappers.BeerMapper;
 import com.dasc.spring6mvc.model.BeerDTO;
+import com.dasc.spring6mvc.model.BeerStyle;
 import com.dasc.spring6mvc.repositories.BeerRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -141,9 +145,34 @@ class BeerControllerIT {
 
   @Test
   void testListBeers() {
-    List<BeerDTO> beers = beerController.listBeers();
+    List<BeerDTO> beers = beerController.listBeers(null, null, false);
 
     assertThat(beers.size()).isEqualTo(2413);
+  }
+
+  @Test
+  void testListBeersByName() throws Exception {
+    mockMvc.perform(get(BeerController.BEER_PATH)
+            .queryParam("beerName", "IPA"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()", is(336)));
+  }
+
+  @Test
+  void testListBeersByStyle() throws Exception {
+    mockMvc.perform(get(BeerController.BEER_PATH)
+            .queryParam("beerStyle", BeerStyle.IPA.name()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()", is(548)));
+  }
+
+  @Test
+  void testListBeersByNameAndStyle() throws Exception {
+    mockMvc.perform(get(BeerController.BEER_PATH)
+            .queryParam("beerName", "IPA")
+            .queryParam("beerStyle", BeerStyle.IPA.name()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()", is(310)));
   }
 
 }
