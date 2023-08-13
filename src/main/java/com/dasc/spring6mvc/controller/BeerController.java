@@ -3,10 +3,10 @@ package com.dasc.spring6mvc.controller;
 import com.dasc.spring6mvc.model.BeerDTO;
 import com.dasc.spring6mvc.model.BeerStyle;
 import com.dasc.spring6mvc.services.BeerService;
-import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,11 +64,13 @@ public class BeerController {
   }
 
   @GetMapping(BEER_PATH)
-  public List<BeerDTO> listBeers(
+  public Page<BeerDTO> listBeers(
       @RequestParam(required = false) String beerName,
       @RequestParam(required = false) BeerStyle beerStyle,
-      @RequestParam(required = false) Boolean showInventory) {
-    return beerService.listBeers(beerName, beerStyle, showInventory);
+      @RequestParam(required = false) Boolean showInventory,
+      @RequestParam(required = false) Integer pageNumber,
+      @RequestParam(required = false) Integer pageSize) {
+    return beerService.listBeers(beerName, beerStyle, showInventory, pageNumber, pageSize);
   }
 
   @GetMapping(BEER_PATH_ID)

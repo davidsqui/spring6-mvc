@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
 
 @DataJpaTest
 @Import({BootStrapData.class, BeerCsvServiceImpl.class})
@@ -48,20 +49,21 @@ class BeerRepositoryTest {
 
   @Test
   void testGetBeerListByName() {
-    List<Beer> beers = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%IPA%");
-    assertThat(beers.size()).isEqualTo(336);
+    Page<Beer> beers = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%IPA%", null);
+    assertThat(beers.getContent().size()).isEqualTo(336);
   }
 
   @Test
   void testGetBeerListByStyle() {
-    List<Beer> beers = beerRepository.findAllByBeerStyle(BeerStyle.IPA);
-    assertThat(beers.size()).isEqualTo(548);
+    Page<Beer> beers = beerRepository.findAllByBeerStyle(BeerStyle.IPA, null);
+    assertThat(beers.getContent().size()).isEqualTo(548);
   }
 
   @Test
   void testGetBeerListByNameAndStyle() {
-    List<Beer> beers = beerRepository.findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%IPA%",BeerStyle.IPA);
-    assertThat(beers.size()).isEqualTo(310);
+    Page<Beer> beers = beerRepository.findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%IPA%",BeerStyle.IPA,
+        null);
+    assertThat(beers.getContent().size()).isEqualTo(310);
   }
 
 }
