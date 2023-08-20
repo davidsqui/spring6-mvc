@@ -1,15 +1,19 @@
 package com.dasc.spring6mvc.bootstrap;
 
 import com.dasc.spring6mvc.entities.Beer;
+import com.dasc.spring6mvc.entities.Customer;
 import com.dasc.spring6mvc.model.BeerCSVRecord;
 import com.dasc.spring6mvc.model.BeerStyle;
 import com.dasc.spring6mvc.repositories.BeerRepository;
+import com.dasc.spring6mvc.repositories.CustomerRepository;
 import com.dasc.spring6mvc.services.BeerCsvService;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.CommandLineRunner;
@@ -22,14 +26,14 @@ import org.springframework.util.ResourceUtils;
 public class BootStrapData implements CommandLineRunner {
 
   private final BeerRepository beerRepository;
-  //  private final CustomerRepository customerRepository;
+  private final CustomerRepository customerRepository;
   private final BeerCsvService beerCsvService;
 
   @Transactional
   @Override
   public void run(String... args) throws Exception {
     loadBeerData();
-//    loadCustomerData();
+    loadCustomerData();
     loadCsvData();
   }
 
@@ -72,37 +76,37 @@ public class BootStrapData implements CommandLineRunner {
 
   }
 
-//  private void loadCustomerData() {
-//
-//    if (customerRepository.count() == 0) {
-//      Customer customer1 = Customer.builder()
-//          .id(UUID.randomUUID())
-//          .name("Customer 1")
-//          .version(1)
-//          .createdDate(LocalDateTime.now())
-//          .updateDate(LocalDateTime.now())
-//          .build();
-//
-//      Customer customer2 = Customer.builder()
-//          .id(UUID.randomUUID())
-//          .name("Customer 2")
-//          .version(1)
-//          .createdDate(LocalDateTime.now())
-//          .updateDate(LocalDateTime.now())
-//          .build();
-//
-//      Customer customer3 = Customer.builder()
-//          .id(UUID.randomUUID())
-//          .name("Customer 3")
-//          .version(1)
-//          .createdDate(LocalDateTime.now())
-//          .updateDate(LocalDateTime.now())
-//          .build();
-//
-//      customerRepository.saveAll(Arrays.asList(customer1, customer2, customer3));
-//    }
-//
-//  }
+  private void loadCustomerData() {
+
+    if (customerRepository.count() == 0) {
+      Customer customer1 = Customer.builder()
+          .id(UUID.randomUUID())
+          .name("Customer 1")
+          .version(1)
+          .createdDate(LocalDateTime.now())
+          .updateDate(LocalDateTime.now())
+          .build();
+
+      Customer customer2 = Customer.builder()
+          .id(UUID.randomUUID())
+          .name("Customer 2")
+          .version(1)
+          .createdDate(LocalDateTime.now())
+          .updateDate(LocalDateTime.now())
+          .build();
+
+      Customer customer3 = Customer.builder()
+          .id(UUID.randomUUID())
+          .name("Customer 3")
+          .version(1)
+          .createdDate(LocalDateTime.now())
+          .updateDate(LocalDateTime.now())
+          .build();
+
+      customerRepository.saveAll(Arrays.asList(customer1, customer2, customer3));
+    }
+
+  }
 
   private void loadCsvData() throws FileNotFoundException {
     if (beerRepository.count() < 10) {

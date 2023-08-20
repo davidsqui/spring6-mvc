@@ -3,6 +3,7 @@ package com.dasc.spring6mvc.bootstrap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.dasc.spring6mvc.repositories.BeerRepository;
+import com.dasc.spring6mvc.repositories.CustomerRepository;
 import com.dasc.spring6mvc.services.BeerCsvService;
 import com.dasc.spring6mvc.services.BeerCsvServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,8 +19,8 @@ class BootstrapDataTest {
   @Autowired
   BeerRepository beerRepository;
 
-//  @Autowired
-//  CustomerRepository customerRepository;
+  @Autowired
+  CustomerRepository customerRepository;
 
   @Autowired
   BeerCsvService beerCsvService;
@@ -28,7 +29,7 @@ class BootstrapDataTest {
 
   @BeforeEach
   void setUp() {
-    bootstrapData = new BootStrapData(beerRepository, beerCsvService);
+    bootstrapData = new BootStrapData(beerRepository, customerRepository, beerCsvService);
   }
 
   @Test
@@ -36,6 +37,6 @@ class BootstrapDataTest {
     bootstrapData.run(null);
 
     assertThat(beerRepository.count()).isEqualTo(2413);
-//    assertThat(customerRepository.count()).isEqualTo(3);
+    assertThat(customerRepository.count()).isEqualTo(3);
   }
 }
