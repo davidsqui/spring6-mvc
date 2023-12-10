@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -66,15 +67,34 @@ public class CustomerServiceImpl implements CustomerService {
   }
 
   @Override
-  public void updateById(UUID id, Customer customer) {
+  public Customer getCustomer(UUID id) {
+    return customerMap.get(id);
+  }
+
+  @Override
+  public void updateCustomer(UUID id, Customer customer) {
     var foundCustomer = customerMap.get(id);
     foundCustomer.setName(customer.getName());
+    foundCustomer.setEmail(customer.getEmail());
     foundCustomer.setUpdateDate(LocalDateTime.now());
     customerMap.put(id, foundCustomer);
   }
 
   @Override
-  public void deleteById(UUID customerId) {
+  public void deleteCustomer(UUID customerId) {
     customerMap.remove(customerId);
+  }
+
+  @Override
+  public void patchCustomer(UUID id, Customer customer) {
+    var foundCustomer = customerMap.get(id);
+    if (StringUtils.isNotEmpty(customer.getName())) {
+      foundCustomer.setName(customer.getName());
+    }
+    if (StringUtils.isNotEmpty(customer.getEmail())) {
+      foundCustomer.setName(customer.getEmail());
+    }
+    foundCustomer.setUpdateDate(LocalDateTime.now());
+    customerMap.put(id, foundCustomer);
   }
 }
