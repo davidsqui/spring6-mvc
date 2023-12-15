@@ -1,21 +1,21 @@
 package com.dasc.spring6mvc.services;
 
-import com.dasc.spring6mvc.entities.Customer;
+import com.dasc.spring6mvc.model.CustomerDTO;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface CustomerService {
 
-  Customer saveCustomer(Customer customer);
+  CustomerDTO saveCustomer(CustomerDTO customer);
 
-  List<Customer> listCustomers();
+  List<CustomerDTO> listCustomers();
 
-  Optional<Customer> getCustomer(UUID customerId);
+  Optional<CustomerDTO> getCustomer(UUID customerId);
 
-  void updateCustomer(UUID customerId, Customer customer);
+  void updateCustomer(UUID customerId, CustomerDTO customer);
 
-  void patchCustomer(UUID customerId, Customer customer);
+  void patchCustomer(UUID customerId, CustomerDTO customer);
 
   void deleteCustomer(UUID customerId);
 

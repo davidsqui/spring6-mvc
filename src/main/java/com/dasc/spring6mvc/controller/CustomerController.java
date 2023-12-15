@@ -1,6 +1,6 @@
 package com.dasc.spring6mvc.controller;
 
-import com.dasc.spring6mvc.entities.Customer;
+import com.dasc.spring6mvc.model.CustomerDTO;
 import com.dasc.spring6mvc.services.CustomerService;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class CustomerController {
   private final CustomerService customerService;
 
   @PostMapping(CUSTOMER_PATH)
-  public ResponseEntity handlePost(Customer customer) {
+  public ResponseEntity handlePost(CustomerDTO customer) {
     var customerSaved = customerService.saveCustomer(customer);
     HttpHeaders headers = new HttpHeaders();
     headers.add("Location", "/api/v1/customers/" + customerSaved.getId().toString());
@@ -46,7 +46,8 @@ public class CustomerController {
   }
 
   @PutMapping(CUSTOMER_PATH_ID)
-  public ResponseEntity updateById(@PathVariable UUID customerId, @RequestBody Customer customer) {
+  public ResponseEntity updateById(@PathVariable UUID customerId,
+      @RequestBody CustomerDTO customer) {
     customerService.updateCustomer(customerId, customer);
     return new ResponseEntity(HttpStatus.NO_CONTENT);
 
@@ -60,7 +61,7 @@ public class CustomerController {
 
   @PatchMapping(CUSTOMER_PATH_ID)
   public ResponseEntity patchCustomer(@PathVariable UUID customerId,
-      @RequestBody Customer customer) {
+      @RequestBody CustomerDTO customer) {
     customerService.patchCustomer(customerId, customer);
     return new ResponseEntity(HttpStatus.NO_CONTENT);
 

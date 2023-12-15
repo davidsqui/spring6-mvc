@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.dasc.spring6mvc.entities.Customer;
+import com.dasc.spring6mvc.model.CustomerDTO;
 import com.dasc.spring6mvc.services.CustomerService;
 import com.dasc.spring6mvc.services.CustomerServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,7 +50,7 @@ class CustomerControllerTest {
   @Captor
   ArgumentCaptor<UUID> uuidArgumentCaptor;
   @Captor
-  ArgumentCaptor<Customer> customerArgumentCaptor;
+  ArgumentCaptor<CustomerDTO> customerArgumentCaptor;
 
   @Test
   void getCustomers() throws Exception {
@@ -89,12 +89,12 @@ class CustomerControllerTest {
 
   @Test
   void createCustomer() throws Exception {
-    var customerToSave = Customer.builder().name("new customer").email("customer@gmail.com")
+    var customerToSave = CustomerDTO.builder().name("new customer").email("customer@gmail.com")
         .build();
-    var returnedCustomer = Customer.builder().id(UUID.randomUUID()).name("new customer")
+    var returnedCustomer = CustomerDTO.builder().id(UUID.randomUUID()).name("new customer")
         .email("customer@gmail.com").build();
 
-    given(customerService.saveCustomer(any(Customer.class))).willReturn(returnedCustomer);
+    given(customerService.saveCustomer(any(CustomerDTO.class))).willReturn(returnedCustomer);
 
     mockMvc.perform(post(CUSTOMER_PATH)
             .accept(MediaType.APPLICATION_JSON)
@@ -116,7 +116,7 @@ class CustomerControllerTest {
             .content(mapper.writeValueAsString(customerToUpdate)))
         .andExpect(status().isNoContent());
 
-    verify(customerService).updateCustomer(any(UUID.class), any(Customer.class));
+    verify(customerService).updateCustomer(any(UUID.class), any(CustomerDTO.class));
 
   }
 
