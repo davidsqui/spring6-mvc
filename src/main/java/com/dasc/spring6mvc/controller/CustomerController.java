@@ -41,7 +41,7 @@ public class CustomerController {
 
   @GetMapping(CUSTOMER_PATH_ID)
   public ResponseEntity getCustomer(@PathVariable UUID customerId) {
-    var customer = customerService.getCustomer(customerId);
+    var customer = customerService.getCustomer(customerId).orElseThrow(NotFoundException::new);
     return new ResponseEntity(customer, HttpStatus.OK);
   }
 

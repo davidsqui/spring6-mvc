@@ -23,6 +23,7 @@ import com.dasc.spring6mvc.services.CustomerServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -67,7 +68,8 @@ class CustomerControllerTest {
   void getCustomerById() throws Exception {
 
     var returnedCustomer = customerServiceImpl.listCustomers().get(0);
-    given(customerService.getCustomer(returnedCustomer.getId())).willReturn(returnedCustomer);
+    given(customerService.getCustomer(returnedCustomer.getId())).willReturn(
+        Optional.of(returnedCustomer));
 
     mockMvc.perform(get(CUSTOMER_PATH_ID, returnedCustomer.getId())
             .accept(MediaType.APPLICATION_JSON))
@@ -76,6 +78,13 @@ class CustomerControllerTest {
         .andExpect(jsonPath("$.id", is(returnedCustomer.getId().toString())))
         .andExpect(jsonPath("$.name", is(returnedCustomer.getName())));
 
+  }
+
+  @Test
+  void getCustomerByIdNotFound() throws Exception {
+    given(customerService.getCustomer(any(UUID.class))).willReturn(Optional.empty());
+    mockMvc.perform(get(CUSTOMER_PATH_ID, UUID.randomUUID()))
+        .andExpect(status().isNotFound());
   }
 
   @Test

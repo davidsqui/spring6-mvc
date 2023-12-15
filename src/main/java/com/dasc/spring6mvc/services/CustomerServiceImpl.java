@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -67,8 +68,8 @@ public class CustomerServiceImpl implements CustomerService {
   }
 
   @Override
-  public Customer getCustomer(UUID id) {
-    return customerMap.get(id);
+  public Optional<Customer> getCustomer(UUID id) {
+    return Optional.ofNullable(customerMap.get(id));
   }
 
   @Override
