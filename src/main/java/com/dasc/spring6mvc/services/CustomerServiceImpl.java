@@ -73,17 +73,18 @@ public class CustomerServiceImpl implements CustomerService {
   }
 
   @Override
-  public void updateCustomer(UUID id, CustomerDTO customer) {
+  public Optional<CustomerDTO> updateCustomer(UUID id, CustomerDTO customer) {
     var foundCustomer = customerMap.get(id);
     foundCustomer.setName(customer.getName());
     foundCustomer.setEmail(customer.getEmail());
     foundCustomer.setUpdateDate(LocalDateTime.now());
-    customerMap.put(id, foundCustomer);
+    return Optional.ofNullable(customerMap.put(id, foundCustomer));
   }
 
   @Override
-  public void deleteCustomer(UUID customerId) {
+  public Boolean deleteCustomer(UUID customerId) {
     customerMap.remove(customerId);
+    return true;
   }
 
   @Override

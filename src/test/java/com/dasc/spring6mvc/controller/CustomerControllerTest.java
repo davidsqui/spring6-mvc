@@ -110,6 +110,9 @@ class CustomerControllerTest {
   void updateCustomer() throws Exception {
     var customerToUpdate = customerServiceImpl.listCustomers().get(0);
 
+    given(customerService.updateCustomer(any(UUID.class), any(CustomerDTO.class))).willReturn(
+        Optional.of(customerToUpdate));
+
     mockMvc.perform(put(CUSTOMER_PATH_ID, customerToUpdate.getId())
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
@@ -123,6 +126,8 @@ class CustomerControllerTest {
   @Test
   void deleteCustomer() throws Exception {
     var customerToDelete = customerServiceImpl.listCustomers().get(0);
+
+    given(customerService.deleteCustomer(any(UUID.class))).willReturn(true);
 
     mockMvc.perform(delete(CUSTOMER_PATH_ID, customerToDelete.getId())
             .accept(MediaType.APPLICATION_JSON))
