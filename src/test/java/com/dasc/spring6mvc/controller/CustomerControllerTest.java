@@ -88,6 +88,25 @@ class CustomerControllerTest {
   }
 
   @Test
+  void createCustomerWithoutNullName() throws Exception {
+    var customerToSave = CustomerDTO.builder().build();
+    var returnedCustomer = CustomerDTO.builder().id(UUID.randomUUID()).name("new customer")
+        .email("customer@gmail.com").build();
+
+    given(customerService.saveCustomer(any(CustomerDTO.class))).willReturn(returnedCustomer);
+
+    var mvcResult = mockMvc.perform(post(CUSTOMER_PATH)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(mapper.writeValueAsString(customerToSave)))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.length()", is(2)))
+        .andReturn();
+
+    System.out.println(mvcResult);
+  }
+
+  @Test
   void createCustomer() throws Exception {
     var customerToSave = CustomerDTO.builder().name("new customer").email("customer@gmail.com")
         .build();
