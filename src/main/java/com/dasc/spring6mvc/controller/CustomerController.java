@@ -2,6 +2,7 @@ package com.dasc.spring6mvc.controller;
 
 import com.dasc.spring6mvc.model.CustomerDTO;
 import com.dasc.spring6mvc.services.CustomerService;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -35,9 +37,11 @@ public class CustomerController {
   }
 
   @GetMapping(CUSTOMER_PATH)
-  public ResponseEntity listCustomers() {
-    var customers = customerService.listCustomers();
-    return new ResponseEntity(customers, HttpStatus.OK);
+  public List<CustomerDTO> listCustomers(
+      @RequestParam(required = false) String name,
+      @RequestParam(required = false) String email) {
+    return customerService.listCustomers(name, email);
+
   }
 
   @GetMapping(CUSTOMER_PATH_ID)

@@ -55,7 +55,8 @@ class CustomerControllerTest {
   @Test
   void getCustomers() throws Exception {
 
-    given(customerService.listCustomers()).willReturn(customerServiceImpl.listCustomers());
+    given(customerService.listCustomers(null,
+        null)).willReturn(customerServiceImpl.listCustomers(null, null));
 
     mockMvc.perform(get(CUSTOMER_PATH)
             .accept(MediaType.APPLICATION_JSON))
@@ -67,7 +68,7 @@ class CustomerControllerTest {
   @Test
   void getCustomerById() throws Exception {
 
-    var returnedCustomer = customerServiceImpl.listCustomers().get(0);
+    var returnedCustomer = customerServiceImpl.listCustomers(null, null).get(0);
     given(customerService.getCustomer(returnedCustomer.getId())).willReturn(
         Optional.of(returnedCustomer));
 
@@ -127,7 +128,7 @@ class CustomerControllerTest {
 
   @Test
   void updateCustomer() throws Exception {
-    var customerToUpdate = customerServiceImpl.listCustomers().get(0);
+    var customerToUpdate = customerServiceImpl.listCustomers(null, null).get(0);
 
     given(customerService.updateCustomer(any(UUID.class), any(CustomerDTO.class))).willReturn(
         Optional.of(customerToUpdate));
@@ -144,7 +145,7 @@ class CustomerControllerTest {
 
   @Test
   void deleteCustomer() throws Exception {
-    var customerToDelete = customerServiceImpl.listCustomers().get(0);
+    var customerToDelete = customerServiceImpl.listCustomers(null, null).get(0);
 
     given(customerService.deleteCustomer(any(UUID.class))).willReturn(true);
 
@@ -159,7 +160,7 @@ class CustomerControllerTest {
 
   @Test
   void patchCustomer() throws Exception {
-    var customerToPatch = customerServiceImpl.listCustomers().get(0);
+    var customerToPatch = customerServiceImpl.listCustomers(null, null).get(0);
 
     Map<String, Object> beerMap = new HashMap<>();
     beerMap.put("name", "new beer name");

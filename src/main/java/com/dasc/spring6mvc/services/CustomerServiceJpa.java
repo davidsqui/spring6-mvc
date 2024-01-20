@@ -1,8 +1,10 @@
 package com.dasc.spring6mvc.services;
 
+import com.dasc.spring6mvc.entities.Customer;
 import com.dasc.spring6mvc.mappers.CustomerMapper;
 import com.dasc.spring6mvc.model.CustomerDTO;
 import com.dasc.spring6mvc.repositories.CustomerRepository;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -11,11 +13,12 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 @Primary
 @RequiredArgsConstructor
-public class CustomerRepositoryJpa implements CustomerService {
+public class CustomerServiceJpa implements CustomerService {
 
   private final CustomerRepository customerRepository;
   private final CustomerMapper customerMapper;
@@ -27,10 +30,33 @@ public class CustomerRepositoryJpa implements CustomerService {
   }
 
   @Override
-  public List<CustomerDTO> listCustomers() {
-    return customerRepository.findAll().stream()
+  public List<CustomerDTO> listCustomers(String name, String email) {
+    List<Customer> customers;
+    if (StringUtils.hasText(name) && !StringUtils.hasText(email)) {
+      customers = listCustomerByName(name);
+    } else if (!StringUtils.hasText(name) && StringUtils.hasText(email)) {
+      customers = listCustomerByEmail(email);
+    } else if (StringUtils.hasText(name) && StringUtils.hasText(email)) {
+      customers = listCustomersByNameAndEmail(name, email);
+    } else {
+      customers = customerRepository.findAll();
+    }
+    return customers.stream()
         .map(customerMapper::toCustomerDto)
         .collect(Collectors.toList());
+  }
+
+  public List<Customer> listCustomerByName(@NotNull String name) {
+    return customerRepository.findAllByNameIsLikeIgnoreCase("%" + name + "%");
+  }
+
+  public List<Customer> listCustomerByEmail(String email) {
+    return customerRepository.findAllByEmailIsLikeIgnoreCase("%" + email + "%");
+  }
+
+  public List<Customer> listCustomersByNameAndEmail(String name, String email) {
+    return customerRepository.findAllByNameIsLikeIgnoreCaseAndEmailIsLikeIgnoreCase(
+        "%" + name + "%", "%" + email + "%");
   }
 
   @Override
