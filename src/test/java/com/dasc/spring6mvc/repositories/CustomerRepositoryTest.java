@@ -45,21 +45,21 @@ class CustomerRepositoryTest {
 
   @Test
   void testGetBeerListByName() {
-    var customers = customerRepository.findAllByNameIsLikeIgnoreCase("%1%");
-    assertThat(customers.size()).isEqualTo(1);
+    var customers = customerRepository.findAllByNameIsLikeIgnoreCase("%1%", null);
+    assertThat(customers.getContent().size()).isEqualTo(1);
   }
 
   @Test
   void testGetBeerListByEmail() {
-    var customers = customerRepository.findAllByEmailIsLikeIgnoreCase("%test1%");
-    assertThat(customers.size()).isEqualTo(1);
+    var customers = customerRepository.findAllByEmailIsLikeIgnoreCase("%test1%", null);
+    assertThat(customers.getContent().size()).isEqualTo(1);
   }
 
   @Test
   void testGetBeerListByNameAndEmail() {
     var customers = customerRepository.findAllByNameIsLikeIgnoreCaseAndEmailIsLikeIgnoreCase("%1%",
-        "%test1%");
-    assertThat(customers.size()).isEqualTo(1);
+        "%test1%", null);
+    assertThat(customers.getContent().size()).isEqualTo(1);
   }
 
 }

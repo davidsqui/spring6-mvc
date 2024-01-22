@@ -4,11 +4,12 @@ import com.dasc.spring6mvc.model.CustomerDTO;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -63,8 +64,9 @@ public class CustomerServiceImpl implements CustomerService {
   }
 
   @Override
-  public List<CustomerDTO> listCustomers(String name, String email) {
-    return new ArrayList<>(customerMap.values());
+  public Page<CustomerDTO> listCustomers(String name, String email, Integer pageNumber,
+      Integer pageSize) {
+    return new PageImpl<>(new ArrayList<>(customerMap.values()));
   }
 
   @Override

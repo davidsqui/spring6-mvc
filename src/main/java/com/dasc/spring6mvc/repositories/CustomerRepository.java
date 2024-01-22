@@ -1,16 +1,18 @@
 package com.dasc.spring6mvc.repositories;
 
 import com.dasc.spring6mvc.entities.Customer;
-import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CustomerRepository extends JpaRepository<Customer, UUID> {
 
-  List<Customer> findAllByNameIsLikeIgnoreCase(String name);
+  Page<Customer> findAllByNameIsLikeIgnoreCase(String name, Pageable pageable);
 
-  List<Customer> findAllByEmailIsLikeIgnoreCase(String email);
+  Page<Customer> findAllByEmailIsLikeIgnoreCase(String email, Pageable pageable);
 
-  List<Customer> findAllByNameIsLikeIgnoreCaseAndEmailIsLikeIgnoreCase(String name, String email);
+  Page<Customer> findAllByNameIsLikeIgnoreCaseAndEmailIsLikeIgnoreCase(String name, String email,
+      Pageable pageable);
 
 }

@@ -1,15 +1,15 @@
 package com.dasc.spring6mvc.services;
 
 import com.dasc.spring6mvc.model.CustomerDTO;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
 
 public interface CustomerService {
 
   CustomerDTO saveCustomer(CustomerDTO customer);
 
-  List<CustomerDTO> listCustomers(String name, String email);
+  Page<CustomerDTO> listCustomers(String name, String email, Integer pageNumber, Integer pageSize);
 
   Optional<CustomerDTO> getCustomer(UUID customerId);
 

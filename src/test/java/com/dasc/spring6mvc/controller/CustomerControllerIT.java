@@ -47,8 +47,8 @@ class CustomerControllerIT {
 
   @Test
   void listCustomers() {
-    var customers = customerController.listCustomers(null, null);
-    assertThat(customers.size()).isEqualTo(3);
+    var customers = customerController.listCustomers(null, null, null, null);
+    assertThat(customers.getContent().size()).isEqualTo(3);
   }
 
   @Rollback
@@ -57,9 +57,9 @@ class CustomerControllerIT {
   void listCustomersEmpty() {
     customerRepository.deleteAll();
 
-    var customers = customerController.listCustomers(null, null);
+    var customers = customerController.listCustomers(null, null, null, null);
 
-    assertThat(customers.size()).isEqualTo(0);
+    assertThat(customers.getContent().size()).isEqualTo(0);
   }
 
   @Test
@@ -142,7 +142,7 @@ class CustomerControllerIT {
     mockMvc.perform(get(CUSTOMER_PATH)
             .queryParam("name", "2"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.size()", is(1)));
+        .andExpect(jsonPath("$.content.size()", is(1)));
   }
 
   @Test
@@ -150,7 +150,7 @@ class CustomerControllerIT {
     mockMvc.perform(get(CUSTOMER_PATH)
             .queryParam("email", "test1@example.com"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.size()", is(1)));
+        .andExpect(jsonPath("$.content.size()", is(1)));
   }
 
   @Test
@@ -159,6 +159,15 @@ class CustomerControllerIT {
             .queryParam("name", "1")
             .queryParam("email", "test1@example.com"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.size()", is(1)));
+        .andExpect(jsonPath("$.content.size()", is(1)));
+  }
+
+  @Test
+  void listCustomersPage1() throws Exception {
+    mockMvc.perform(get(CUSTOMER_PATH)
+            .queryParam("pageNumber", "1")
+            .queryParam("pageSize", "2"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content.size()", is(2)));
   }
 }

@@ -5,13 +5,14 @@ import com.dasc.spring6mvc.mappers.CustomerMapper;
 import com.dasc.spring6mvc.model.CustomerDTO;
 import com.dasc.spring6mvc.repositories.CustomerRepository;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -23,6 +24,9 @@ public class CustomerServiceJpa implements CustomerService {
   private final CustomerRepository customerRepository;
   private final CustomerMapper customerMapper;
 
+  private static final int DEFAULT_PAGE = 0;
+  private static final int DEFAULT_PAGE_SIZE = 25;
+
   @Override
   public CustomerDTO saveCustomer(CustomerDTO customerDto) {
     return customerMapper.toCustomerDto(
@@ -30,33 +34,57 @@ public class CustomerServiceJpa implements CustomerService {
   }
 
   @Override
-  public List<CustomerDTO> listCustomers(String name, String email) {
-    List<Customer> customers;
+  public Page<CustomerDTO> listCustomers(String name, String email, Integer pageNumber,
+      Integer pageSize) {
+    PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
+    Page<Customer> customers;
     if (StringUtils.hasText(name) && !StringUtils.hasText(email)) {
-      customers = listCustomerByName(name);
+      customers = listCustomerByName(name, pageRequest);
     } else if (!StringUtils.hasText(name) && StringUtils.hasText(email)) {
-      customers = listCustomerByEmail(email);
+      customers = listCustomerByEmail(email, pageRequest);
     } else if (StringUtils.hasText(name) && StringUtils.hasText(email)) {
-      customers = listCustomersByNameAndEmail(name, email);
+      customers = listCustomersByNameAndEmail(name, email, pageRequest);
     } else {
-      customers = customerRepository.findAll();
+      customers = customerRepository.findAll(pageRequest);
     }
-    return customers.stream()
-        .map(customerMapper::toCustomerDto)
-        .collect(Collectors.toList());
+    return customers.map(customerMapper::toCustomerDto);
   }
 
-  public List<Customer> listCustomerByName(@NotNull String name) {
-    return customerRepository.findAllByNameIsLikeIgnoreCase("%" + name + "%");
+  public PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
+    int queryPageNumber;
+    int queryPageSize;
+
+    if (pageNumber != null && pageNumber > 0) {
+      queryPageNumber = pageNumber - 1;
+    } else {
+      queryPageNumber = DEFAULT_PAGE;
+    }
+
+    if (pageSize == null) {
+      queryPageSize = DEFAULT_PAGE_SIZE;
+    } else {
+      if (pageSize > 1000) {
+        queryPageSize = 1000;
+      } else {
+        queryPageSize = pageSize;
+      }
+    }
+
+    return PageRequest.of(queryPageNumber, queryPageSize);
   }
 
-  public List<Customer> listCustomerByEmail(String email) {
-    return customerRepository.findAllByEmailIsLikeIgnoreCase("%" + email + "%");
+  public Page<Customer> listCustomerByName(@NotNull String name, Pageable pageable) {
+    return customerRepository.findAllByNameIsLikeIgnoreCase("%" + name + "%", pageable);
   }
 
-  public List<Customer> listCustomersByNameAndEmail(String name, String email) {
+  public Page<Customer> listCustomerByEmail(String email, Pageable pageable) {
+    return customerRepository.findAllByEmailIsLikeIgnoreCase("%" + email + "%", pageable);
+  }
+
+  public Page<Customer> listCustomersByNameAndEmail(String name, String email,
+      Pageable pageable) {
     return customerRepository.findAllByNameIsLikeIgnoreCaseAndEmailIsLikeIgnoreCase(
-        "%" + name + "%", "%" + email + "%");
+        "%" + name + "%", "%" + email + "%", pageable);
   }
 
   @Override

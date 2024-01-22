@@ -2,9 +2,9 @@ package com.dasc.spring6mvc.controller;
 
 import com.dasc.spring6mvc.model.CustomerDTO;
 import com.dasc.spring6mvc.services.CustomerService;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,10 +37,12 @@ public class CustomerController {
   }
 
   @GetMapping(CUSTOMER_PATH)
-  public List<CustomerDTO> listCustomers(
+  public Page<CustomerDTO> listCustomers(
       @RequestParam(required = false) String name,
-      @RequestParam(required = false) String email) {
-    return customerService.listCustomers(name, email);
+      @RequestParam(required = false) String email,
+      @RequestParam(required = false) Integer pageNumber,
+      @RequestParam(required = false) Integer pageSize) {
+    return customerService.listCustomers(name, email, pageNumber, pageSize);
 
   }
 

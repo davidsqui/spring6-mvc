@@ -55,20 +55,21 @@ class CustomerControllerTest {
   @Test
   void getCustomers() throws Exception {
 
-    given(customerService.listCustomers(null,
-        null)).willReturn(customerServiceImpl.listCustomers(null, null));
+    given(customerService.listCustomers(null, null, null, null))
+        .willReturn(customerServiceImpl.listCustomers(null, null, 1, 25));
 
     mockMvc.perform(get(CUSTOMER_PATH)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.length()", is(3)));
+        .andExpect(jsonPath("$.content.size()", is(3)));
   }
 
   @Test
   void getCustomerById() throws Exception {
 
-    var returnedCustomer = customerServiceImpl.listCustomers(null, null).get(0);
+    var returnedCustomer = customerServiceImpl.listCustomers(null, null, null, null).getContent()
+        .get(0);
     given(customerService.getCustomer(returnedCustomer.getId())).willReturn(
         Optional.of(returnedCustomer));
 
@@ -128,7 +129,8 @@ class CustomerControllerTest {
 
   @Test
   void updateCustomer() throws Exception {
-    var customerToUpdate = customerServiceImpl.listCustomers(null, null).get(0);
+    var customerToUpdate = customerServiceImpl.listCustomers(null, null, null, null)
+        .getContent().get(0);
 
     given(customerService.updateCustomer(any(UUID.class), any(CustomerDTO.class))).willReturn(
         Optional.of(customerToUpdate));
@@ -145,7 +147,8 @@ class CustomerControllerTest {
 
   @Test
   void deleteCustomer() throws Exception {
-    var customerToDelete = customerServiceImpl.listCustomers(null, null).get(0);
+    var customerToDelete = customerServiceImpl.listCustomers(null, null, null, null)
+        .getContent().get(0);
 
     given(customerService.deleteCustomer(any(UUID.class))).willReturn(true);
 
@@ -160,7 +163,8 @@ class CustomerControllerTest {
 
   @Test
   void patchCustomer() throws Exception {
-    var customerToPatch = customerServiceImpl.listCustomers(null, null).get(0);
+    var customerToPatch = customerServiceImpl.listCustomers(null, null, null, null)
+        .getContent().get(0);
 
     Map<String, Object> beerMap = new HashMap<>();
     beerMap.put("name", "new beer name");
