@@ -1,9 +1,13 @@
 package com.dasc.spring6mvc.controller;
 
+import static com.dasc.spring6mvc.controller.BeerControllerTest.PASSWORD;
+import static com.dasc.spring6mvc.controller.BeerControllerTest.USERNAME;
 import static com.dasc.spring6mvc.controller.CustomerController.CUSTOMER_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,7 +46,9 @@ class CustomerControllerIT {
 
   @BeforeEach
   void setUp() {
-    mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+    mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+        .apply(springSecurity())
+        .build();
   }
 
   @Test
@@ -140,6 +146,7 @@ class CustomerControllerIT {
   @Test
   void listCustomersByName() throws Exception {
     mockMvc.perform(get(CUSTOMER_PATH)
+            .with(httpBasic(USERNAME, PASSWORD))
             .queryParam("name", "2"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content.size()", is(1)));
@@ -148,6 +155,7 @@ class CustomerControllerIT {
   @Test
   void listCustomersByEmail() throws Exception {
     mockMvc.perform(get(CUSTOMER_PATH)
+            .with(httpBasic(USERNAME, PASSWORD))
             .queryParam("email", "test1@example.com"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content.size()", is(1)));
@@ -156,6 +164,7 @@ class CustomerControllerIT {
   @Test
   void listCustomersByNameAndEmail() throws Exception {
     mockMvc.perform(get(CUSTOMER_PATH)
+            .with(httpBasic(USERNAME, PASSWORD))
             .queryParam("name", "1")
             .queryParam("email", "test1@example.com"))
         .andExpect(status().isOk())
@@ -165,6 +174,7 @@ class CustomerControllerIT {
   @Test
   void listCustomersPage1() throws Exception {
     mockMvc.perform(get(CUSTOMER_PATH)
+            .with(httpBasic(USERNAME, PASSWORD))
             .queryParam("pageNumber", "1")
             .queryParam("pageSize", "2"))
         .andExpect(status().isOk())
