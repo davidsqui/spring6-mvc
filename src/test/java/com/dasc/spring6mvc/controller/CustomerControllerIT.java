@@ -2,11 +2,13 @@ package com.dasc.spring6mvc.controller;
 
 import static com.dasc.spring6mvc.controller.BeerControllerTest.PASSWORD;
 import static com.dasc.spring6mvc.controller.BeerControllerTest.USERNAME;
+import static com.dasc.spring6mvc.controller.BeerControllerTest.jwtRequestPostProcessor;
 import static com.dasc.spring6mvc.controller.CustomerController.CUSTOMER_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -16,6 +18,7 @@ import com.dasc.spring6mvc.mappers.CustomerMapper;
 import com.dasc.spring6mvc.model.CustomerDTO;
 import com.dasc.spring6mvc.repositories.CustomerRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Instant;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -146,7 +149,7 @@ class CustomerControllerIT {
   @Test
   void listCustomersByName() throws Exception {
     mockMvc.perform(get(CUSTOMER_PATH)
-            .with(httpBasic(USERNAME, PASSWORD))
+            .with(jwtRequestPostProcessor)
             .queryParam("name", "2"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content.size()", is(1)));
@@ -155,7 +158,7 @@ class CustomerControllerIT {
   @Test
   void listCustomersByEmail() throws Exception {
     mockMvc.perform(get(CUSTOMER_PATH)
-            .with(httpBasic(USERNAME, PASSWORD))
+            .with(jwtRequestPostProcessor)
             .queryParam("email", "test1@example.com"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content.size()", is(1)));
@@ -164,7 +167,7 @@ class CustomerControllerIT {
   @Test
   void listCustomersByNameAndEmail() throws Exception {
     mockMvc.perform(get(CUSTOMER_PATH)
-            .with(httpBasic(USERNAME, PASSWORD))
+            .with(jwtRequestPostProcessor)
             .queryParam("name", "1")
             .queryParam("email", "test1@example.com"))
         .andExpect(status().isOk())
@@ -174,7 +177,7 @@ class CustomerControllerIT {
   @Test
   void listCustomersPage1() throws Exception {
     mockMvc.perform(get(CUSTOMER_PATH)
-            .with(httpBasic(USERNAME, PASSWORD))
+            .with(jwtRequestPostProcessor)
             .queryParam("pageNumber", "1")
             .queryParam("pageSize", "2"))
         .andExpect(status().isOk())
